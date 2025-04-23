@@ -51,6 +51,19 @@
       transform: translateX(100%);
       background-color: #1f2937;
     }
+
+    .grid-cols-18 {
+      display: grid;
+      grid-template-columns: repeat(18, 70px);
+      gap: 4px;
+    }
+
+    .periodic-table-container {
+      display: flex;
+      justify-content: center;
+      width: 100%;
+      padding: 0;
+    }
   </style>
 </head>
 <body id="pageBody" class="bg-gray-100 min-h-screen text-gray-900 transition-colors duration-300">
@@ -70,7 +83,7 @@
     </div>
   </header>
 
-  <main class="max-w-7xl mx-auto px-4 py-6 flex flex-col items-center">
+  <main class="w-full">
     <div class="mb-4 text-center">
       <input
         type="text"
@@ -79,8 +92,10 @@
         class="px-4 py-2 border border-gray-300 bg-white text-gray-900 rounded-md shadow-sm w-full max-w-xs text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
       />
     </div>
-    <div class="grid grid-cols-18 gap-1 relative" style="min-width: max-content;" id="elementsGrid">
-      <!-- Elements will be positioned manually -->
+    <div class="periodic-table-container">
+      <div class="grid-cols-18" id="elementsGrid">
+        <!-- Elements will be positioned manually -->
+      </div>
     </div>
   </main>
 
