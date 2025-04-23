@@ -27,6 +27,23 @@
       transform: scale(1.1);
       z-index: 10;
     }
+
+    .tooltip {
+      display: none;
+      position: absolute;
+      bottom: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: rgba(0, 0, 0, 0.8);
+      color: white;
+      padding: 5px 10px;
+      border-radius: 4px;
+      font-size: 12px;
+      white-space: nowrap;
+      margin-bottom: 5px;
+      z-index: 20;
+    }
+
     .element:hover .tooltip {
       display: block;
     }
@@ -62,7 +79,7 @@
         class="px-4 py-2 border border-gray-300 bg-white text-gray-900 rounded-md shadow-sm w-full max-w-xs text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
       />
     </div>
-    <div class="grid grid-cols-18 gap-1 relative" id="elementsGrid">
+    <div class="grid grid-cols-18 gap-1 relative mx-auto" style="width: fit-content;" id="elementsGrid">
       <!-- Elements will be positioned manually -->
     </div>
   </main>
@@ -142,6 +159,10 @@
           <div class="text-xs font-medium">${element.number}</div>
           <div class="text-lg font-bold">${symbol}</div>
           <div class="text-xs">${element.name}</div>
+          <div class="tooltip">
+            Atomic Number: ${element.number}<br>
+            Atomic Mass: ${element.mass}
+          </div>
         `;
         div.onclick = () => showDetails(symbol);
         div.style.gridRowStart = pos[0];
