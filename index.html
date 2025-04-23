@@ -104,26 +104,53 @@
       <button class="absolute top-2 right-2 text-gray-500 hover:text-black text-xl" onclick="closeModal()">&times;</button>
       <h2 id="detailTitle" class="text-2xl font-bold mb-4">Element Name</h2>
       <div id="detailInfo" class="text-sm leading-relaxed">
-        <div class="bg-gray-100 p-4 rounded-lg">
-          <h3 class="text-lg font-semibold mb-2">Physical Appearance</h3>
-          <p>${element.appearance || '—'}</p>
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4">
+          <div class="bg-gray-100 p-4 rounded-lg">
+            <h3 class="text-lg font-semibold mb-2">Physical Appearance</h3>
+            <p>${element.appearance || '—'}</p>
+          </div>
+          <div class="bg-gray-100 p-4 rounded-lg">
+            <h3 class="text-lg font-semibold mb-2">Electron Configuration</h3>
+            <p>${element.electronConfiguration || '—'}</p>
+          </div>
+          <div class="bg-gray-100 p-4 rounded-lg">
+            <h3 class="text-lg font-semibold mb-2">Discovery</h3>
+            <p>${element.discovery || '—'}</p>
+          </div>
+          <div class="bg-gray-100 p-4 rounded-lg">
+            <h3 class="text-lg font-semibold mb-2">Occurrence</h3>
+            <p>${element.occurrence || '—'}</p>
+          </div>
         </div>
-        <div class="bg-gray-100 p-4 rounded-lg">
-          <h3 class="text-lg font-semibold mb-2">Electron Configuration</h3>
-          <p>${element.electronConfiguration || '—'}</p>
-        </div>
-        <div class="bg-gray-100 p-4 rounded-lg">
-          <h3 class="text-lg font-semibold mb-2">Discovery</h3>
-          <p>${element.discovery || '—'}</p>
-        </div>
-        <div class="bg-gray-100 p-4 rounded-lg">
-          <h3 class="text-lg font-semibold mb-2">Occurrence</h3>
-          <p>${element.occurrence || '—'}</p>
-        </div>
-      </div>
 
-      
-        <p class="italic text-xs text-gray-500 mt-2">Simplified atomic structure showing orbital shells</p>
+        <div class="bg-gray-100 p-4 rounded-lg mt-4 text-center">
+          <h3 class="text-lg font-semibold mb-2">Atomic Model</h3>
+          <div class="relative w-[192px] h-[192px] mx-auto">
+            <div id="nucleus" class="absolute w-12 h-12 rounded-full bg-gray-800 text-white flex items-center justify-center text-lg font-bold top-[50%] left-[50%] -translate-x-1/2 -translate-y-1/2 z-20"></div>
+            <div id="electrons"></div>
+          </div>
+          <p class="italic text-xs text-gray-500 mt-2">Simplified atomic structure showing orbital shells</p>
+        </div>
+
+        <div class="bg-gray-100 p-4 rounded-lg mt-4 w-full">
+          <h3 class="text-lg font-semibold mb-2">Safety Information</h3>
+          <div class="space-y-2">
+            <p class="flex items-center">
+              <span class="font-medium mr-2">Toxicity:</span>
+              <span class="${element.isToxic ? 'text-red-600' : 'text-green-600'}">
+                ${element.isToxic ? '⚠️ Toxic' : '✅ Non-toxic'}
+              </span>
+            </p>
+            <p class="flex items-center">
+              <span class="font-medium mr-2">State at Room Temperature:</span>
+              <span>${element.stateAtRoomTemp || '—'}</span>
+            </p>
+            <p class="flex items-center">
+              <span class="font-medium mr-2">Safety Precautions:</span>
+              <span>${element.safetyPrecautions || '—'}</span>
+            </p>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -131,7 +158,7 @@
   <footer class="text-center py-4 text-sm text-gray-600">
     <p>Created by 
       <a href="https://immasidd.com" target="_blank" class="text-blue-600 hover:text-blue-800 hover:underline">Siddhant Choudhary</a>, 
-      Mayank Mourya and Shardul Dhumal
+      Mayank Mourya, Shardul Dhumal and Dr. Priya Joshi
     </p>
   </footer>
 
@@ -241,6 +268,26 @@
             <div id="electrons"></div>
           </div>
           <p class="italic text-xs text-gray-500 mt-2">Simplified atomic structure showing orbital shells</p>
+        </div>
+
+        <div class="bg-gray-100 p-4 rounded-lg mt-4">
+          <h3 class="text-lg font-semibold mb-2">Safety Information</h3>
+          <div class="space-y-2">
+            <p class="flex items-center">
+              <span class="font-medium mr-2">Toxicity:</span>
+              <span class="${element.isToxic ? 'text-red-600' : 'text-green-600'}">
+                ${element.isToxic ? '⚠️ Toxic' : '✅ Non-toxic'}
+              </span>
+            </p>
+            <p class="flex items-center">
+              <span class="font-medium mr-2">State at Room Temperature:</span>
+              <span>${element.stateAtRoomTemp || '—'}</span>
+            </p>
+            <p class="flex items-start">
+              <span class="font-medium mr-2">Safety Precautions:</span>
+              <span class="flex-1">${element.safetyPrecautions || '—'}</span>
+            </p>
+          </div>
         </div>
       `;
 
