@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en" id="htmlRoot">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Periodic Table</title>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+    }
+  </script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .element {
+      width: 70px;
+      height: 70px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .element:hover {
+      transform: scale(1.1);
+      z-index: 10;
+    }
+    .element:hover .tooltip {
+      display: block;
+    }
+    input#modeToggle:checked + div > .dot {
+      transform: translateX(100%);
+      background-color: #1f2937;
+    }
+  </style>
+</head>
+<body id="pageBody" class="bg-gray-100 min-h-screen text-gray-900 transition-colors duration-300">
+  <header class="text-center py-6">
+    <h1 class="text-4xl font-bold">Interactive Periodic Table</h1>
+    <div class="flex flex-wrap justify-center gap-4 mt-4 text-sm">
+      <div class="bg-red-200 px-2 py-1 rounded">Alkali Metals</div>
+      <div class="bg-orange-200 px-2 py-1 rounded">Alkaline Earth Metals</div>
+      <div class="bg-yellow-200 px-2 py-1 rounded">Transition Metals</div>
+      <div class="bg-lime-200 px-2 py-1 rounded">Post-Transition Metals</div>
+      <div class="bg-green-200 px-2 py-1 rounded">Metalloids</div>
+      <div class="bg-blue-200 px-2 py-1 rounded">Nonmetals</div>
+      <div class="bg-indigo-200 px-2 py-1 rounded">Halogens</div>
+      <div class="bg-purple-200 px-2 py-1 rounded">Noble Gases</div>
+      <div class="bg-pink-300 px-2 py-1 rounded">Lanthanides</div>
+      <div class="bg-pink-400 px-2 py-1 rounded">Actinides</div>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 py-6">
+    <div class="mb-4 text-center">
+      <input
+        type="text"
+        id="searchInput"
+        placeholder="Search elements..."
+        class="px-4 py-2 border border-gray-300 bg-white text-gray-900 rounded-md shadow-sm w-full max-w-xs text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+      />
+    </div>
+    <div class="grid grid-cols-18 gap-1 relative" id="elementsGrid">
+      <!-- Elements will be positioned manually -->
+    </div>
+  </main>
+
+  <div id="detailModal" class="fixed inset-0 bg-black/50 flex items-center justify-center overflow-y-auto p-4 hidden z-50">
+    <div class="bg-white text-black p-6 rounded-lg shadow-2xl w-[95%] max-w-4xl max-h-[90vh] overflow-y-auto relative">
+      <button class="absolute top-2 right-2 text-gray-500 hover:text-black text-xl" onclick="closeModal()">&times;</button>
+      <h2 id="detailTitle" class="text-2xl font-bold mb-4">Element Name</h2>
+      <div id="detailInfo" class="text-sm leading-relaxed">
+        <div class="bg-gray-100 p-4 rounded-lg">
+          <h3 class="text-lg font-semibold mb-2">Physical Appearance</h3>
+          <p>${element.appearance || '—'}</p>
+        </div>
+        <div class="bg-gray-100 p-4 rounded-lg">
+          <h3 class="text-lg font-semibold mb-2">Electron Configuration</h3>
+          <p>${element.electronConfiguration || '—'}</p>
+        </div>
+        <div class="bg-gray-100 p-4 rounded-lg">
+          <h3 class="text-lg font-semibold mb-2">Discovery</h3>
+          <p>${element.discovery || '—'}</p>
+        </div>
+        <div class="bg-gray-100 p-4 rounded-lg">
+          <h3 class="text-lg font-semibold mb-2">Occurrence</h3>
+          <p>${element.occurrence || '—'}</p>
+        </div>
+      </div>
+
+      
+        <p class="italic text-xs text-gray-500 mt-2">Simplified atomic structure showing orbital shells</p>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    const htmlRoot = document.getElementById('htmlRoot');
+    import elements from './elements_full.js';
+    import bohrShells from './bohrShells.js';
+
+    const categories = {
+      "Alkali Metal": "bg-red-200",
+      "Alkaline Earth Metal": "bg-orange-200",
+      "Transition Metal": "bg-yellow-200",
+      "Post-Transition Metal": "bg-lime-200",
+      "Metalloid": "bg-green-200",
+      "Nonmetal": "bg-blue-200",
+      "Halogen": "bg-indigo-200",
+      "Noble Gas": "bg-purple-200",
+      "Lanthanide": "bg-pink-300",
+      "Actinide": "bg-pink-400"
+    };
+
+    function renderElements() {
+      const searchQuery = document.getElementById('searchInput')?.value?.toLowerCase() || '';
+      const positions = {
+        1:[1,1],2:[1,18],3:[2,1],4:[2,2],5:[2,13],6:[2,14],7:[2,15],8:[2,16],9:[2,17],10:[2,18],
+        11:[3,1],12:[3,2],13:[3,13],14:[3,14],15:[3,15],16:[3,16],17:[3,17],18:[3,18],
+        19:[4,1],20:[4,2],21:[4,3],22:[4,4],23:[4,5],24:[4,6],25:[4,7],26:[4,8],27:[4,9],28:[4,10],29:[4,11],30:[4,12],31:[4,13],32:[4,14],33:[4,15],34:[4,16],35:[4,17],36:[4,18],
+        37:[5,1],38:[5,2],39:[5,3],40:[5,4],41:[5,5],42:[5,6],43:[5,7],44:[5,8],45:[5,9],46:[5,10],47:[5,11],48:[5,12],49:[5,13],50:[5,14],51:[5,15],52:[5,16],53:[5,17],54:[5,18],
+        55:[6,1],56:[6,2],57:[6,3],72:[6,4],73:[6,5],74:[6,6],75:[6,7],76:[6,8],77:[6,9],78:[6,10],79:[6,11],80:[6,12],81:[6,13],82:[6,14],83:[6,15],84:[6,16],85:[6,17],86:[6,18],
+        87:[7,1],88:[7,2],89:[7,3],104:[7,4],105:[7,5],106:[7,6],107:[7,7],108:[7,8],109:[7,9],110:[7,10],111:[7,11],112:[7,12],113:[7,13],114:[7,14],115:[7,15],116:[7,16],117:[7,17],118:[7,18],
+        58:[8,4],59:[8,5],60:[8,6],61:[8,7],62:[8,8],63:[8,9],64:[8,10],65:[8,11],66:[8,12],67:[8,13],68:[8,14],69:[8,15],70:[8,16],71:[8,17],
+        90:[9,4],91:[9,5],92:[9,6],93:[9,7],94:[9,8],95:[9,9],96:[9,10],97:[9,11],98:[9,12],99:[9,13],100:[9,14],101:[9,15],102:[9,16],103:[9,17]
+      };
+
+      const grid = document.getElementById('elementsGrid');
+      Object.entries(elements).forEach(([symbol, element]) => {
+        if (
+          !element.name.toLowerCase().includes(searchQuery) &&
+          !symbol.toLowerCase().includes(searchQuery)
+        ) return;
+        const pos = positions[element.number];
+        if (!pos) return;
+        const div = document.createElement('div');
+        const style = categories[element.category] || 'bg-white';
+        div.className = `element group relative ${style} border border-gray-300 p-2 rounded text-center cursor-pointer hover:scale-105 transition-transform shadow-sm`;
+        div.innerHTML = `
+          <div class="text-xs font-medium">${element.number}</div>
+          <div class="text-lg font-bold">${symbol}</div>
+          <div class="text-xs">${element.name}</div>
+        `;
+        div.onclick = () => showDetails(symbol);
+        div.style.gridRowStart = pos[0];
+        div.style.gridColumnStart = pos[1];
+        grid.appendChild(div);
+      });
+    }
+
+    window.showDetails = function (symbol) {
+      const element = elements[symbol];
+      document.getElementById('detailTitle').textContent = `${element.name} (${symbol})`;
+
+      document.getElementById('detailInfo').innerHTML = `
+        <div class="flex items-center gap-6 p-4 mb-4 bg-gray-50 rounded-lg">
+          <div class="rounded-full w-12 h-12 flex items-center justify-center text-xl font-bold ${categories[element.category] || 'bg-gray-200'}">
+            ${symbol}
+          </div>
+          <div>
+            <h3 class="text-xl font-bold">${element.name} (${symbol})</h3>
+            <p>Atomic Number: ${element.number}</p>
+            <p>Atomic Mass: ${element.mass}</p>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4">
+          <div class="bg-gray-100 p-4 rounded-lg">
+            <h3 class="text-lg font-semibold mb-2">Physical Appearance</h3>
+            <p>${element.appearance || '—'}</p>
+          </div>
+          <div class="bg-gray-100 p-4 rounded-lg">
+            <h3 class="text-lg font-semibold mb-2">Electron Configuration</h3>
+            <p>${element.electronConfiguration || '—'}</p>
+          </div>
+          <div class="bg-gray-100 p-4 rounded-lg">
+            <h3 class="text-lg font-semibold mb-2">Discovery</h3>
+            <p>${element.discovery || '—'}</p>
+          </div>
+          <div class="bg-gray-100 p-4 rounded-lg">
+            <h3 class="text-lg font-semibold mb-2">Occurrence</h3>
+            <p>${element.occurrence || '—'}</p>
+          </div>
+        </div>
+
+        <div class="bg-gray-100 p-4 rounded-lg mt-4 text-center">
+          <h3 class="text-lg font-semibold mb-2">Atomic Model</h3>
+          <div class="relative w-[192px] h-[192px] mx-auto">
+            <div id="nucleus" class="absolute w-12 h-12 rounded-full bg-gray-800 text-white flex items-center justify-center text-lg font-bold top-[50%] left-[50%] -translate-x-1/2 -translate-y-1/2 z-20"></div>
+            <div id="electrons"></div>
+          </div>
+          <p class="italic text-xs text-gray-500 mt-2">Simplified atomic structure showing orbital shells</p>
+        </div>
+      `;
+
+      document.getElementById('nucleus').textContent = symbol;
+
+      const shellElectrons = bohrShells[element.number.toString()] || [];
+      const electronsDiv = document.getElementById('electrons');
+      electronsDiv.innerHTML = '';
+
+      const baseRadius = 36;
+      const spacing = 12;
+      const shellConfig = shellElectrons.map((_, i) => ({
+        radius: baseRadius + (shellElectrons.length - 1 - i) * spacing,
+      }));
+
+      const modelContainer = electronsDiv.parentElement;
+      modelContainer.querySelectorAll('.orbit-line').forEach(el => el.remove());
+
+      shellConfig.forEach(shell => {
+        const orbit = document.createElement('div');
+        orbit.className = 'absolute border-2 border-dashed rounded-full orbit-line';
+        const size = shell.radius * 2;
+        orbit.style.width = `${size}px`;
+        orbit.style.height = `${size}px`;
+        orbit.style.top = `${96 - shell.radius}px`;
+        orbit.style.left = `${96 - shell.radius}px`;
+        orbit.style.position = 'absolute';
+        orbit.style.zIndex = '0'; // Added line
+        electronsDiv.parentElement.appendChild(orbit);
+      });
+
+      const center = 96;
+      shellElectrons.forEach((count, shellIndex) => {
+        const shell = shellConfig[shellIndex];
+        if (!shell || count <= 0) return;
+
+        const electronSize = 6;
+        const adjustedRadius = shell.radius;
+        for (let i = 0; i < count; i++) {
+          const angle = (360 / count) * i;
+          const radian = (angle * Math.PI) / 180;
+
+          const orbitOffset = (192 - adjustedRadius * 2) / 2;
+          const x = center + adjustedRadius * Math.cos(radian);
+          const y = center + adjustedRadius * Math.sin(radian);
+
+          const electron = document.createElement('div');
+          electron.className = 'absolute bg-blue-500 rounded-full';
+          electron.style.width = `${electronSize}px`;
+          electron.style.height = `${electronSize}px`;
+          electron.style.top = `${y}px`;
+          electron.style.left = `${x}px`;
+          electron.style.transform = 'translate(-50%, -50%)';
+          electron.style.opacity = '0.9';
+          electron.style.boxShadow = '0 0 3px #3B82F6';
+          electron.style.zIndex = '10'; // Added line
+          electronsDiv.appendChild(electron);
+        }
+      });
+      document.getElementById('detailModal').classList.remove('hidden');
+    };
+
+    window.closeModal = function () {
+      document.getElementById('detailModal').classList.add('hidden');
+    };
+
+    document.addEventListener('DOMContentLoaded', () => {
+      renderElements();
+    });
+
+    document.getElementById('searchInput')?.addEventListener('input', () => {
+      document.getElementById('elementsGrid').innerHTML = '';
+      renderElements();
+    });
+    
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeModal();
+      }
+    });
+  </script>
+</body>
+</html>
