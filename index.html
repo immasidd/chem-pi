@@ -69,17 +69,17 @@
 <body id="pageBody" class="bg-gray-100 min-h-screen text-gray-900 transition-colors duration-300">
   <header class="text-center py-6">
     <h1 class="text-4xl font-bold">Interactive Periodic Table</h1>
-    <div class="flex flex-wrap justify-center gap-4 mt-4 text-sm">
-      <div class="bg-red-200 px-2 py-1 rounded">Alkali Metals</div>
-      <div class="bg-orange-200 px-2 py-1 rounded">Alkaline Earth Metals</div>
-      <div class="bg-yellow-200 px-2 py-1 rounded">Transition Metals</div>
-      <div class="bg-lime-200 px-2 py-1 rounded">Post-Transition Metals</div>
-      <div class="bg-green-200 px-2 py-1 rounded">Metalloids</div>
-      <div class="bg-blue-200 px-2 py-1 rounded">Nonmetals</div>
-      <div class="bg-indigo-200 px-2 py-1 rounded">Halogens</div>
-      <div class="bg-purple-200 px-2 py-1 rounded">Noble Gases</div>
-      <div class="bg-pink-300 px-2 py-1 rounded">Lanthanides</div>
-      <div class="bg-pink-400 px-2 py-1 rounded">Actinides</div>
+    <div class="flex flex-wrap justify-center gap-4 mt-4 text-sm" id="categoryFilters">
+      <div class="bg-red-200 px-2 py-1 rounded cursor-pointer hover:scale-105 transition-transform" data-category="Alkali Metal">Alkali Metals</div>
+      <div class="bg-orange-200 px-2 py-1 rounded cursor-pointer hover:scale-105 transition-transform" data-category="Alkaline Earth Metal">Alkaline Earth Metals</div>
+      <div class="bg-yellow-200 px-2 py-1 rounded cursor-pointer hover:scale-105 transition-transform" data-category="Transition Metal">Transition Metals</div>
+      <div class="bg-lime-200 px-2 py-1 rounded cursor-pointer hover:scale-105 transition-transform" data-category="Post-Transition Metal">Post-Transition Metals</div>
+      <div class="bg-green-200 px-2 py-1 rounded cursor-pointer hover:scale-105 transition-transform" data-category="Metalloid">Metalloids</div>
+      <div class="bg-blue-200 px-2 py-1 rounded cursor-pointer hover:scale-105 transition-transform" data-category="Nonmetal">Nonmetals</div>
+      <div class="bg-indigo-200 px-2 py-1 rounded cursor-pointer hover:scale-105 transition-transform" data-category="Halogen">Halogens</div>
+      <div class="bg-purple-200 px-2 py-1 rounded cursor-pointer hover:scale-105 transition-transform" data-category="Noble Gas">Noble Gases</div>
+      <div class="bg-pink-300 px-2 py-1 rounded cursor-pointer hover:scale-105 transition-transform" data-category="Lanthanide">Lanthanides</div>
+      <div class="bg-pink-400 px-2 py-1 rounded cursor-pointer hover:scale-105 transition-transform" data-category="Actinide">Actinides</div>
     </div>
   </header>
 
@@ -133,6 +133,8 @@
     import elements from './elements_full.js';
     import bohrShells from './bohrShells.js';
 
+    let currentCategory = null;
+
     const categories = {
       "Alkali Metal": "bg-red-200",
       "Alkaline Earth Metal": "bg-orange-200",
@@ -160,11 +162,15 @@
       };
 
       const grid = document.getElementById('elementsGrid');
+      grid.innerHTML = ''; // Clear existing elements
+
       Object.entries(elements).forEach(([symbol, element]) => {
         if (
-          !element.name.toLowerCase().includes(searchQuery) &&
-          !symbol.toLowerCase().includes(searchQuery)
+          (!element.name.toLowerCase().includes(searchQuery) &&
+          !symbol.toLowerCase().includes(searchQuery)) ||
+          (currentCategory && element.category !== currentCategory)
         ) return;
+
         const pos = positions[element.number];
         if (!pos) return;
         const div = document.createElement('div');
@@ -294,12 +300,40 @@
       document.getElementById('detailModal').classList.add('hidden');
     };
 
+    // Add category filter functionality
+    document.getElementById('categoryFilters').addEventListener('click', (e) => {
+      const category = e.target.dataset.category;
+      if (!category) return;
+
+      // Toggle category filter
+      if (currentCategory === category) {
+        currentCategory = null;
+        document.querySelectorAll('#categoryFilters > div').forEach(div => {
+          div.style.opacity = '1';
+          div.style.transform = 'scale(1)';
+        });
+      } else {
+        currentCategory = category;
+        document.querySelectorAll('#categoryFilters > div').forEach(div => {
+          if (div.dataset.category === category) {
+            div.style.opacity = '1';
+            div.style.transform = 'scale(1.1)';
+          } else {
+            div.style.opacity = '0.5';
+            div.style.transform = 'scale(1)';
+          }
+        });
+      }
+      
+      renderElements();
+    });
+
+    // Initialize the periodic table
     document.addEventListener('DOMContentLoaded', () => {
       renderElements();
     });
 
     document.getElementById('searchInput')?.addEventListener('input', () => {
-      document.getElementById('elementsGrid').innerHTML = '';
       renderElements();
     });
     
